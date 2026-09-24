@@ -1,0 +1,18 @@
+{
+    "name": "DynamicV.GameSDK.Editor",
+    "rootNamespace": "DynamicV.GameSDK.Editor",
+    "references": [
+        "DynamicV.GameSDK"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
