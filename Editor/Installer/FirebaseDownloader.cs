@@ -44,9 +44,9 @@ namespace DynamicV.GameSDK.Installer
         {
             using (var http = new HttpClient { Timeout = TimeSpan.FromMinutes(30) })
             {
-                foreach (var entry in entries.Where(e => e.Url != null)) DownloadDirect(http, entry);
+                foreach (var entry in entries.Where(e => !e.ViaLevelPlayManager && e.Url != null)) DownloadDirect(http, entry);
 
-                var packageFiles = entries.Where(e => e.Url == null).Select(e => e.PackageFile).ToList();
+                var packageFiles = entries.Where(e => !e.ViaLevelPlayManager && e.Url == null).Select(e => e.PackageFile).ToList();
                 if (packageFiles.Count > 0) DownloadFromFirebaseZip(http, packageFiles);
                 Status = "Download complete.";
             }

@@ -12,6 +12,7 @@ namespace DynamicV.GameSDK.Installer
         private FirebaseDownloader _download;
         private Task _downloadTask;
         private List<CatalogEntry> _importing = new List<CatalogEntry>();
+        private Task _levelPlayTask;
         private string _status = "Ready.";
         private Vector2 _scroll;
 
@@ -44,6 +45,7 @@ namespace DynamicV.GameSDK.Installer
 
         private void Tick()
         {
+            if (_levelPlayTask != null && _levelPlayTask.IsCompleted) FinishLevelPlay();
             if (_download == null) return;
             if (_download.Finished) { FinishDownload(); return; }
             Repaint();
@@ -57,7 +59,7 @@ namespace DynamicV.GameSDK.Installer
                 "~60 MB each) and imports them. Required modules are needed for the Game SDK to compile.",
                 MessageType.Info);
 
-            var busy = _download != null;
+            var busy = _download != null || _levelPlayTask != null;
             _scroll = EditorGUILayout.BeginScrollView(_scroll);
             foreach (var e in PackageCatalog.Entries)
             {
@@ -98,8 +100,37 @@ namespace DynamicV.GameSDK.Installer
         {
             _status = "Starting...";
             _importing = pending;
+            var downloads = pending.Where(e => !e.ViaLevelPlayManager).ToList();
+            if (downloads.Count == 0) { StartLevelPlay(); return; }
             _download = new FirebaseDownloader();
-            _downloadTask = _download.RunAsync(pending);
+            _downloadTask = _download.RunAsync(downloads);
+        }
+
+        private bool WantsLevelPlay => _importing.Any(e => e.ViaLevelPlayManager);
+
+        private void StartLevelPlay()
+        {
+            if (!WantsLevelPlay) return;
+            _status = "Installing LevelPlay native SDK...";
+            _levelPlayTask = LevelPlayInstaller.InstallAsync();
+        }
+
+        private void FinishLevelPlay()
+        {
+            var t = _levelPlayTask;
+            _levelPlayTask = null;
+            if (t.IsFaulted)
+            {
+                _status = "LevelPlay install failed: " + t.Exception.GetBaseException().Message;
+                Debug.LogError("[GameSDK] " + _status);
+            }
+            else
+            {
+                AssetDatabase.Refresh();
+                FirebaseState.SyncDefines();
+                _status = "LevelPlay native SDK installed. Run Assets > External Dependency Manager > Android Resolver > Force Resolve.";
+            }
+            Repaint();
         }
 
         private void FinishDownload()
@@ -132,7 +163,8 @@ namespace DynamicV.GameSDK.Installer
 
             FirebaseState.SyncDefines();
             _status = "Imported. Next: DynamicV > Game SDK > Create Config Asset.";
-Repaint();
+            StartLevelPlay();
+            Repaint();
         }
     }
 }

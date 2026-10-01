@@ -19,6 +19,9 @@ namespace DynamicV.GameSDK.Installer
         public string RemoveAfterImport;
         // Scripting define the runtime assembly is gated on (set for every module so optional ones are detected too; only required ones gate compilation).
         public string Define;
+        // Not in the Firebase zip and not a plain download: installed by LevelPlayInstaller through
+        // LevelPlay's own Network Manager code (see LevelPlayInstaller).
+        public bool ViaLevelPlayManager;
     }
 
     // Firebase's Unity SDK is only published as one zip of .unitypackage files (no UPM registry),
@@ -43,6 +46,14 @@ namespace DynamicV.GameSDK.Installer
             new CatalogEntry { Label = "Analytics", Required = true, PackageFile = "FirebaseAnalytics.unitypackage", Dll = "Firebase.Analytics.dll", Define = "DV_FIREBASE_ANALYTICS" },
             new CatalogEntry { Label = "Authentication (Google Sign-In)", Required = true, PackageFile = "FirebaseAuth.unitypackage", Dll = "Firebase.Auth.dll", Define = "DV_FIREBASE_AUTH" },
             new CatalogEntry { Label = "Crashlytics", Required = true, PackageFile = "FirebaseCrashlytics.unitypackage", Dll = "Firebase.Crashlytics.dll", Define = "DV_FIREBASE_CRASHLYTICS" },
+            // The LevelPlay UPM package (a hard dependency of the SDK) ships only the C#/Java bridge.
+            // The native mediation SDK is a separate install; without it the Android build fails to
+            // compile. Optional and unticked: projects that don't use ads can skip it.
+            new CatalogEntry
+            {
+                Label = "LevelPlay native SDK (Android/iOS)", PackageFile = "LevelPlayNativeSdk",
+                DetectFolder = "LevelPlay", ViaLevelPlayManager = true,
+            },
             new CatalogEntry { Label = "Remote Config", PackageFile = "FirebaseRemoteConfig.unitypackage", Dll = "Firebase.RemoteConfig.dll", Define = "DV_FIREBASE_REMOTECONFIG" },
             new CatalogEntry { Label = "Cloud Messaging", PackageFile = "FirebaseMessaging.unitypackage", Dll = "Firebase.Messaging.dll", Define = "DV_FIREBASE_MESSAGING" },
             new CatalogEntry { Label = "Firestore", PackageFile = "FirebaseFirestore.unitypackage", Dll = "Firebase.Firestore.dll", Define = "DV_FIREBASE_FIRESTORE" },
