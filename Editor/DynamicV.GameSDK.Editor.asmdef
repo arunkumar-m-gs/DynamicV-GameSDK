@@ -12,7 +12,28 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
+    "defineConstraints": [
+        "DV_FIREBASE_ANALYTICS",
+        "DV_FIREBASE_AUTH",
+        "DV_FIREBASE_CRASHLYTICS",
+        "DV_GOOGLE_SIGNIN"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.google.firebase.analytics",
+            "expression": "",
+            "define": "DV_FIREBASE_ANALYTICS"
+        },
+        {
+            "name": "com.google.firebase.auth",
+            "expression": "",
+            "define": "DV_FIREBASE_AUTH"
+        },
+        {
+            "name": "com.google.firebase.crashlytics",
+            "expression": "",
+            "define": "DV_FIREBASE_CRASHLYTICS"
+        }
+    ],
     "noEngineReferences": false
 }

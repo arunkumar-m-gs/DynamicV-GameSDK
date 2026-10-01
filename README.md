@@ -29,6 +29,30 @@ Everything else - wiring the services together, initializing them in the right o
 handling the LevelPlay/Firebase async startup dance, the Google Sign-In native-fragment
 race condition, the credential-collision-on-reinstall case - is handled by this package.
 
+## Automatic Firebase install
+
+On first import a **DynamicV Game SDK Setup** window opens (reopen any time via
+`DynamicV > Game SDK > Setup Dependencies`; `Install Required Firebase Modules` in the same
+menu does it without the window). Firebase's Unity SDK isn't on any UPM registry, so the
+installer downloads only the ticked modules (~60 MB each) out of Google's latest official zip
+via HTTP range requests, and imports the `.unitypackage` files. It also installs the Google
+Sign-In plugin (a separate Google project, not part of Firebase). Firebase brings EDM4U with it.
+
+Three things it does for you that a plain import gets wrong:
+- Sets the `DV_FIREBASE_*` / `DV_GOOGLE_SIGNIN` scripting defines. The runtime assembly only
+  compiles once all required modules are present, so a fresh import shows no compile errors
+  while you're still in the window.
+- Wraps `Assets/GoogleSignIn` in an asmdef. The plugin ships loose `.cs` files, which land in
+  `Assembly-CSharp`, and a named asmdef assembly can't reference that.
+- Deletes `Assets/Parse` (only if the plugin created it). The 2018 plugin bundles
+  `Unity.Tasks`/`Unity.Compat` shim DLLs that duplicate types in .NET Standard 2.1 and break
+  compilation of Burst, UGUI, Timeline, Input System, etc.
+
+Firebase you imported by hand is detected too. Don't mix this with Firebase installed as UPM
+tarballs from a different source.
+
+Still manual: `google-services.json` / `GoogleService-Info.plist` and the SHA-1 / web client ID.
+
 ## Per-project setup (minimal path)
 
 1. In the target project's `Packages/manifest.json`, add:
