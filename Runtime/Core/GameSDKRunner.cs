@@ -30,7 +30,7 @@ namespace DynamicV.GameSDK
             if (dependencyStatus != DependencyStatus.Available)
             {
                 Debug.LogError($"[GameSDK] Firebase dependencies are not available: {dependencyStatus}");
-                FinishInit(null, null, null);
+                FinishInit(null, null, null, null, null);
                 return;
             }
 
@@ -39,6 +39,8 @@ namespace DynamicV.GameSDK
             IAnalyticsService analytics = null;
             ICrashService crash = null;
             IAuthService auth = null;
+            IMessagingService messaging = null;
+            IDatabaseService database = null;
 
             if (_config.analyticsEnabled)
             {
@@ -57,7 +59,21 @@ namespace DynamicV.GameSDK
                 auth = authService;
             }
 
-            FinishInit(analytics, crash, auth);
+#if DV_FIREBASE_MESSAGING
+            if (_config.messagingEnabled)
+            {
+                messaging = new FirebaseMessagingService();
+            }
+#endif
+
+#if DV_FIREBASE_DATABASE
+            if (_config.databaseEnabled)
+            {
+                database = new FirebaseDatabaseService();
+            }
+#endif
+
+            FinishInit(analytics, crash, auth, messaging, database);
             Debug.Log("[GameSDK] Firebase initialized.");
         }
 
@@ -80,11 +96,12 @@ namespace DynamicV.GameSDK
 
         private bool _finished;
 
-        private void FinishInit(IAnalyticsService analytics, ICrashService crash, IAuthService auth)
+        private void FinishInit(IAnalyticsService analytics, ICrashService crash, IAuthService auth,
+            IMessagingService messaging, IDatabaseService database)
         {
             if (_finished) return;
             _finished = true;
-            GameSDK.MarkInitialized(_config, _adsService, analytics, crash, auth);
+            GameSDK.MarkInitialized(_config, _adsService, analytics, crash, auth, messaging, database);
         }
 
         private void OnDestroy()

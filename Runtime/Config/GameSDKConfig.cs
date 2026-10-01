@@ -31,6 +31,12 @@ namespace DynamicV.GameSDK
         [Header("Firebase Crashlytics")]
         public bool crashlyticsEnabled = true;
 
+        [Header("Firebase Cloud Messaging (optional module)")]
+        public bool messagingEnabled = true;
+
+        [Header("Firebase Realtime Database (optional module)")]
+        public bool databaseEnabled = true;
+
         [Header("Firebase Auth / Google Sign-In")]
         public bool authEnabled = true;
         [Tooltip("Sign in anonymously on first launch if no user session exists yet.")]

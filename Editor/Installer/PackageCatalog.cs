@@ -17,7 +17,7 @@ namespace DynamicV.GameSDK.Installer
         // Folder under Assets/ the package ships that breaks modern Unity (see the Google Sign-In
         // entry). Removed after import, but only if it didn't exist before we imported.
         public string RemoveAfterImport;
-        // Scripting define the runtime assembly is gated on (required modules only).
+        // Scripting define the runtime assembly is gated on (set for every module so optional ones are detected too; only required ones gate compilation).
         public string Define;
     }
 
@@ -43,11 +43,11 @@ namespace DynamicV.GameSDK.Installer
             new CatalogEntry { Label = "Analytics", Required = true, PackageFile = "FirebaseAnalytics.unitypackage", Dll = "Firebase.Analytics.dll", Define = "DV_FIREBASE_ANALYTICS" },
             new CatalogEntry { Label = "Authentication (Google Sign-In)", Required = true, PackageFile = "FirebaseAuth.unitypackage", Dll = "Firebase.Auth.dll", Define = "DV_FIREBASE_AUTH" },
             new CatalogEntry { Label = "Crashlytics", Required = true, PackageFile = "FirebaseCrashlytics.unitypackage", Dll = "Firebase.Crashlytics.dll", Define = "DV_FIREBASE_CRASHLYTICS" },
-            new CatalogEntry { Label = "Remote Config", PackageFile = "FirebaseRemoteConfig.unitypackage", Dll = "Firebase.RemoteConfig.dll" },
-            new CatalogEntry { Label = "Cloud Messaging", PackageFile = "FirebaseMessaging.unitypackage", Dll = "Firebase.Messaging.dll" },
-            new CatalogEntry { Label = "Firestore", PackageFile = "FirebaseFirestore.unitypackage", Dll = "Firebase.Firestore.dll" },
-            new CatalogEntry { Label = "Realtime Database", PackageFile = "FirebaseDatabase.unitypackage", Dll = "Firebase.Database.dll" },
-            new CatalogEntry { Label = "Cloud Storage", PackageFile = "FirebaseStorage.unitypackage", Dll = "Firebase.Storage.dll" },
+            new CatalogEntry { Label = "Remote Config", PackageFile = "FirebaseRemoteConfig.unitypackage", Dll = "Firebase.RemoteConfig.dll", Define = "DV_FIREBASE_REMOTECONFIG" },
+            new CatalogEntry { Label = "Cloud Messaging", PackageFile = "FirebaseMessaging.unitypackage", Dll = "Firebase.Messaging.dll", Define = "DV_FIREBASE_MESSAGING" },
+            new CatalogEntry { Label = "Firestore", PackageFile = "FirebaseFirestore.unitypackage", Dll = "Firebase.Firestore.dll", Define = "DV_FIREBASE_FIRESTORE" },
+            new CatalogEntry { Label = "Realtime Database", PackageFile = "FirebaseDatabase.unitypackage", Dll = "Firebase.Database.dll", Define = "DV_FIREBASE_DATABASE" },
+            new CatalogEntry { Label = "Cloud Storage", PackageFile = "FirebaseStorage.unitypackage", Dll = "Firebase.Storage.dll", Define = "DV_FIREBASE_STORAGE" },
         };
     }
 }

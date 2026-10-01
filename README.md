@@ -38,6 +38,10 @@ installer downloads only the ticked modules (~60 MB each) out of Google's latest
 via HTTP range requests, and imports the `.unitypackage` files. It also installs the Google
 Sign-In plugin (a separate Google project, not part of Firebase). Firebase brings EDM4U with it.
 
+Optional modules (Cloud Messaging, Realtime Database, Remote Config, Firestore, Cloud Storage) are
+ticked in the same window. Messaging and Database have SDK services: `GameSDK.Messaging` and
+`GameSDK.Database` (null when the module isn't installed or is disabled in the config).
+
 Three things it does for you that a plain import gets wrong:
 - Sets the `DV_FIREBASE_*` / `DV_GOOGLE_SIGNIN` scripting defines. The runtime assembly only
   compiles once all required modules are present, so a fresh import shows no compile errors

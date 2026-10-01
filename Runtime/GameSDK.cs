@@ -16,6 +16,10 @@ namespace DynamicV.GameSDK
         public static IAnalyticsService Analytics { get; private set; }
         public static ICrashService Crash { get; private set; }
         public static IAuthService Auth { get; private set; }
+        /// <summary>Null unless the Cloud Messaging module is installed and enabled.</summary>
+        public static IMessagingService Messaging { get; private set; }
+        /// <summary>Null unless the Realtime Database module is installed and enabled.</summary>
+        public static IDatabaseService Database { get; private set; }
 
         /// <summary>Fires once, after Firebase + LevelPlay have both finished initializing.</summary>
         public static event Action OnInitialized;
@@ -25,13 +29,17 @@ namespace DynamicV.GameSDK
             IAdsService ads,
             IAnalyticsService analytics,
             ICrashService crash,
-            IAuthService auth)
+            IAuthService auth,
+            IMessagingService messaging = null,
+            IDatabaseService database = null)
         {
             Config = config;
             Ads = ads;
             Analytics = analytics;
             Crash = crash;
             Auth = auth;
+            Messaging = messaging;
+            Database = database;
             IsInitialized = true;
             OnInitialized?.Invoke();
         }
