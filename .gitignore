@@ -4,3 +4,7 @@
 obj/
 bin/
 .vs/
+
+# IDE
+.idea/
+.vscode/
