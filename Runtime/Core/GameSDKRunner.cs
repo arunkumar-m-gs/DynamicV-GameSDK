@@ -18,9 +18,16 @@ namespace DynamicV.GameSDK
             _config = config;
             InitializeFirebaseAsync();
 
-            if (_config.adsEnabled && !string.IsNullOrEmpty(_config.levelPlayAppKey))
+            if (_config.adsEnabled)
             {
-                InitializeAds();
+                if (string.IsNullOrEmpty(_config.ResolveAppKey()))
+                {
+                    Debug.LogWarning("[GameSDK] Ads are enabled but no LevelPlay app key is set for this platform; ads stay off.");
+                }
+                else
+                {
+                    InitializeAds();
+                }
             }
         }
 
@@ -81,7 +88,7 @@ namespace DynamicV.GameSDK
 
         private void InitializeAds()
         {
-            _adsService = new LevelPlayAdsService(_config);
+            _adsService = new LevelPlayAdsService(_config, this);
 
             LevelPlay.OnInitSuccess += _ =>
             {
@@ -91,7 +98,7 @@ namespace DynamicV.GameSDK
             LevelPlay.OnInitFailed += error =>
                 Debug.LogError($"[GameSDK] LevelPlay failed to initialize: {error}");
 
-            LevelPlay.Init(_config.levelPlayAppKey);
+            LevelPlay.Init(_config.ResolveAppKey());
         }
 
         private bool _finished;

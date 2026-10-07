@@ -82,10 +82,10 @@ using DynamicV.GameSDK;
 
 GameSDK.Analytics.LogEvent("level_complete", "level", 12);
 GameSDK.Crash.Log("entered shop");
-GameSDK.Ads.ShowInterstitial();
-GameSDK.Ads.ShowRewarded("shop_double_coins", granted =>
+GameSDK.Ads.ShowInterstitial(shown => ContinueToNextScreen());
+GameSDK.Ads.ShowRewarded("hints", granted =>
 {
-    if (granted) GrantDoubleCoins();
+    if (granted) GrantHint();
 });
 
 GameSDK.Auth.OnSignInSuccess += (user, isNew) => { /* ... */ };
@@ -95,6 +95,27 @@ GameSDK.Auth.SignInWithGoogle();
 Everything is null until `GameSDK.IsInitialized` is true; subscribe to
 `GameSDK.OnInitialized` if you need to act the instant it comes up, otherwise by the
 time your first scene's UI is interactive it's normally already ready.
+
+## Ads (LevelPlay)
+
+Fill these in on the config asset:
+
+- `levelPlayAppKeyAndroid` / `levelPlayAppKeyIos` - one app key per platform. The build picks the
+  one for its own platform (the Editor uses Android).
+- `interstitial` / `banner` - one ad unit ID per platform each.
+- `rewardedUnits` - one entry per rewarded ad unit: a `key` of your choice plus its Android and iOS
+  ad unit IDs. Game code picks a unit by key, so a game can have as many rewarded placements
+  (hints, lives, ...) as it has ad units: `GameSDK.Ads.ShowRewarded("hints", ...)`.
+
+```csharp
+if (GameSDK.Ads != null && GameSDK.Ads.IsRewardedReady("hints")) { ... }
+GameSDK.Ads.ShowBanner();   // appears once loaded; HideBanner() removes it
+GameSDK.Ads.OnBannerVisibilityChanged += visible => ReserveSpace(visible ? GameSDK.Ads.BannerHeightDp : 0);
+```
+
+The banner is created hidden, so the game decides when it first shows (e.g. only from level 7).
+Ads are loaded in the background and retried with backoff if a load fails. `GameSDK.Ads` stays
+null until LevelPlay is configured with an app key, so always null-check it.
 
 ## Package layout
 

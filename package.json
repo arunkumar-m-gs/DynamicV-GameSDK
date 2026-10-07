@@ -1,6 +1,6 @@
 {
   "name": "com.dynamicv.gamesdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "DynamicV Game SDK",
   "description": "Studio-wide Unity SDK wrapping Firebase (Analytics, Auth, Crashlytics) and ad mediation (LevelPlay: AdMob, Meta Audience Network, Unity Ads) behind one facade. Drop into a project, fill one config asset, done.",
   "unity": "2022.3",

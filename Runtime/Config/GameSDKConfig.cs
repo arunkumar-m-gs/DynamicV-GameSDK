@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DynamicV.GameSDK
@@ -19,11 +21,14 @@ namespace DynamicV.GameSDK
 
         [Header("Ads (LevelPlay)")]
         public bool adsEnabled = true;
-        [Tooltip("LevelPlay app key from the ironSource/LevelPlay dashboard for THIS project.")]
-        public string levelPlayAppKey;
-        public string interstitialAdUnitId;
-        public string rewardedAdUnitId;
-        public string bannerAdUnitId;
+        [Tooltip("LevelPlay app key for the Android app, from the LevelPlay dashboard.")]
+        public string levelPlayAppKeyAndroid;
+        [Tooltip("LevelPlay app key for the iOS app, from the LevelPlay dashboard.")]
+        public string levelPlayAppKeyIos;
+        public PlatformAdUnit interstitial;
+        public PlatformAdUnit banner;
+        [Tooltip("One entry per rewarded ad unit. Game code picks one by key: GameSDK.Ads.ShowRewarded(\"hints\", ...).")]
+        public List<RewardedAdUnit> rewardedUnits = new List<RewardedAdUnit>();
 
         [Header("Firebase Analytics")]
         public bool analyticsEnabled = true;
@@ -43,5 +48,40 @@ namespace DynamicV.GameSDK
         public bool autoSignInAnonymously = true;
         [Tooltip("OAuth 2.0 Web Client ID (type 3) from the google-services.json currently bundled in THIS project. Must match that file's project or sign-in fails at runtime with an InvalidCredential error, not a compile error.")]
         public string googleWebClientId;
+
+        /// <summary>LevelPlay app key for the platform this build runs on. The Editor uses the Android one.</summary>
+        public string ResolveAppKey()
+        {
+#if UNITY_IOS
+            return levelPlayAppKeyIos;
+#else
+            return levelPlayAppKeyAndroid;
+#endif
+        }
+    }
+
+    /// <summary>An ad unit that has a different ID on each platform.</summary>
+    [Serializable]
+    public class PlatformAdUnit
+    {
+        public string androidAdUnitId;
+        public string iosAdUnitId;
+
+        public string Resolve()
+        {
+#if UNITY_IOS
+            return iosAdUnitId;
+#else
+            return androidAdUnitId;
+#endif
+        }
+    }
+
+    /// <summary>A rewarded ad unit game code refers to by <see cref="key"/>.</summary>
+    [Serializable]
+    public class RewardedAdUnit : PlatformAdUnit
+    {
+        [Tooltip("Name game code passes to ShowRewarded, e.g. \"hints\" or \"lives\".")]
+        public string key;
     }
 }
