@@ -16,8 +16,8 @@ namespace DynamicV.GameSDK
         internal void Initialize(GameSDKConfig config)
         {
             _config = config;
-            InitializeFirebaseAsync();
 
+            // Ads first: _adsService must exist before FinishInit hands it to GameSDK.
             if (_config.adsEnabled)
             {
                 if (string.IsNullOrEmpty(_config.ResolveAppKey()))
@@ -29,7 +29,23 @@ namespace DynamicV.GameSDK
                     InitializeAds();
                 }
             }
+
+            // Firebase only allows one CheckAndFixDependenciesAsync at a time, and it throws if
+            // anything else calls into Firebase while it runs. A game that has its own Firebase
+            // setup and only uses the SDK for ads must therefore not start one here.
+            if (UsesFirebase)
+            {
+                InitializeFirebaseAsync();
+            }
+            else
+            {
+                FinishInit(null, null, null, null, null);
+            }
         }
+
+        private bool UsesFirebase =>
+            _config.analyticsEnabled || _config.crashlyticsEnabled || _config.authEnabled
+            || _config.messagingEnabled || _config.databaseEnabled;
 
         private async void InitializeFirebaseAsync()
         {

@@ -113,6 +113,11 @@ GameSDK.Ads.ShowBanner();   // appears once loaded; HideBanner() removes it
 GameSDK.Ads.OnBannerVisibilityChanged += visible => ReserveSpace(visible ? GameSDK.Ads.BannerHeightDp : 0);
 ```
 
+**Ads-only games** (the game has its own Firebase setup): turn off every Firebase service on the
+config asset (analytics, crashlytics, auth, messaging, database). The SDK then never calls into
+Firebase. Firebase allows only one `CheckAndFixDependenciesAsync` at a time and throws if anything
+else calls it concurrently, so leaving a service on here would break the game's own Firebase init.
+
 The banner is created hidden, so the game decides when it first shows (e.g. only from level 7).
 Ads are loaded in the background and retried with backoff if a load fails. `GameSDK.Ads` stays
 null until LevelPlay is configured with an app key, so always null-check it.
