@@ -201,7 +201,7 @@ namespace DynamicV.GameSDK
                 .SetSize(LevelPlayAdSize.BANNER)
                 .SetPosition(LevelPlayBannerPosition.BottomCenter)
                 .SetDisplayOnLoad(false)
-                .SetRespectSafeArea(true)
+                .SetRespectSafeArea(false)
                 .Build();
 
             _banner = new LevelPlayBannerAd(id, bannerConfig);
